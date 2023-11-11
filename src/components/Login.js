@@ -1,33 +1,45 @@
 // Login.js
 import React, { useState } from 'react';
-import '../styles/styles.min.css';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
   
-    const handleLogin = (e) => {
-      e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:4000/auth/login', { email, password });
   
-      // Aquí puedes realizar la lógica de inicio de sesión utilizando axios
-      // Por ejemplo, puedes enviar una solicitud al backend para autenticar al usuario
+      if (response.status === 200) {
+        alert('Inicio de sesión exitoso');
+        navigate('/users');
+      } else {
+        alert(`Error en el inicio de sesión: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error('Error en la conexión:', error);
   
-      axios.post('http://localhost:4000/login', { email, password })
-        .then(response => {
-          // Manejar la respuesta del backend después del inicio de sesión exitoso
-          console.log('Inicio de sesión exitoso:', response.data);
-          navigate('/users')
-                
-        })
-        .catch(error => {
-          // Manejar errores de inicio de sesión
-          console.error('Error al iniciar sesión:', error);
-        });
-    };
+      if (error.response) {
+        // El servidor respondió con un código de estado diferente de 2xx
+        console.error('Respuesta del servidor:', error.response.data);
+        alert(`Error en el inicio de sesión: ${error.response.data.message}`);
+      } else if (error.request) {
+        // La solicitud fue hecha pero no se recibió respuesta
+        console.error('No se recibió respuesta del servidor');
+        alert('Error en la conexión. Por favor, inténtalo de nuevo.');
+      } else {
+        // Algo sucedió en la configuración de la solicitud que desencadenó un error
+        console.error('Error en la configuración de la solicitud:', error.message);
+        alert('Error en la conexión. Por favor, inténtalo de nuevo.');
+      }
+    }
+  };
   
+
     return (
       <div className="container">
         <div className="row justify-content-center">

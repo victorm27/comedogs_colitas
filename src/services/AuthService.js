@@ -1,37 +1,46 @@
 // AuthService.js
 class AuthService {
-    login(username, password) {
-      // Lógica de autenticación aquí
-      return fetch('http://localhost:3000', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error en la autenticación');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Lógica para guardar el token de autenticación en el local storage o en una cookie
-        localStorage.setItem('token', data.token);
-        return data;
-      });
-    }
-  
-    logout() {
-      // Lógica de cierre de sesión aquí
-      localStorage.removeItem('token');
-    }
-  
-    getCurrentUser() {
-      // Lógica para obtener el usuario actual utilizando el token almacenado en el local storage o en la cookie
-      return JSON.parse(localStorage.getItem('user'));
-    }
+  login(email, password) {
+    // Lógica de autenticación aquí
+    return fetch('http://localhost:4000/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la autenticación');
+      }
+      return response.json();
+    })
+    .then(data => {
+      return data;
+    });
   }
-  
-  export default AuthService();
+
+    register(firstName, lastName, email, password) {
+    // Lógica de registro aquí
+    return fetch('http://localhost:4000/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ firstName, lastName, email, password })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en el registro');
+      }
+      return response.json();
+    })
+    .then(data => {
+      return data;
+    });
+  }
+}
+
+export default AuthService();
+
   

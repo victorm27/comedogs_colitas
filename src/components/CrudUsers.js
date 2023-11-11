@@ -6,6 +6,7 @@ const CRUDUSERS = () => {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ email: '', password: '' });
   const [editingUser, setEditingUser] = useState(null);
+  
   const [setErrors] = useState({});
   useEffect(() => {
     // Obtener la lista de usuarios al cargar el componente
@@ -44,30 +45,30 @@ const CRUDUSERS = () => {
       });
   };
 
-  const handleEditUser = (e) => {
-    e.preventDefault();
+const handleEditUser = (e) => {
+  e.preventDefault();
 
-    // Validación de campos
-    if (!editingUser.email || !editingUser.password) {
-      setErrors({ message: 'Todos los campos son obligatorios' });
-      return;
-    }
+  // Validación de campos
+  if (!editingUser || !editingUser.email || !editingUser.password) {
+    setErrors({ message: 'Todos los campos son obligatorios' });
+    return;
+  }
 
-    // Editar un usuario existente
-    axios.put(`http://localhost:4000/users/${editingUser.id}`, editingUser)
-      .then(response => {
-        console.log('Usuario editado exitosamente:', response.data);
-        // Actualizar la lista de usuarios después de la edición
-        setUsers(users.map(user => (user.id === editingUser.id ? response.data : user)));
-        // Cerrar el modal de edición
-        setEditingUser(null);
-        setErrors({});
-        document.getElementById('editEmployeeModal').style.display = 'none';
-      })
-      .catch(error => {
-        console.error('Error al editar el usuario:', error);
-      });
-  };
+  // Resto del código para editar un usuario existente
+  axios.put(`http://localhost:4000/users/${editingUser.id}`, editingUser)
+    .then(response => {
+      console.log('Usuario editado exitosamente:', response.data);
+      // Actualizar la lista de usuarios después de la edición
+      setUsers(users.map(user => (user.id === editingUser.id ? response.data : user)));
+      // Cerrar el modal de edición
+      setEditingUser(null);
+      setErrors({});
+      document.getElementById('editEmployeeModal').style.display = 'none';
+    })
+    .catch(error => {
+      console.error('Error al editar el usuario:', error);
+    });
+};
 
   const handleDeleteUser = (userId) => {
     // Eliminar un usuario
@@ -96,155 +97,203 @@ const CRUDUSERS = () => {
     document.getElementById('editEmployeeModal').style.display = 'none';
   };
    
-  return (
-    <div className="container-xl">
-      <div className="table-responsive">
-        <div className="table-wrapper">
-          <div className="table-title">
-            <div className="row">
-              <div className="col-sm-6">
-                <h2>Gestionar <b>Usuarios</b></h2>
+        return (
+          <div className="container-xl">
+            <div className="table-responsive">
+              <div className="table-wrapper">
+                <div className="table-title">
+                  <div className="row">
+                    <div className="col-sm-6">
+                      <h2>Gestionar <b>Usuarios</b></h2>
+                    </div>
+                    <div className="col-sm-6">
+                      <a href="#addEmployeeModal" className="btn btn-success" data-toggle="modal">
+                        <i className="material-icons">&#xE147;</i> <span>Añadir un usuario nuevo</span>
+                      </a>
+                      <a href="#deleteEmployeeModal" className="btn btn-danger" data-toggle="modal">
+                        <i className="material-icons">&#xE15C;</i> <span>Eliminar</span>
+                      </a>						
+                    </div>
+                  </div>
+                </div>
+                <table className="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>
+                        <span className="custom-checkbox">
+                          <input type="checkbox" id="selectAll" />
+                          <label htmlFor="selectAll"></label>
+                        </span>
+                      </th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Correo electrónico</th>
+                      <th>Contraseña</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+        {users.map(user => (
+          <tr key={user._id}>
+            <td>
+              <span className="custom-checkbox">
+                <input type="checkbox" id={`checkbox${user._id}`} name="options[]" defaultValue={1} />
+                <label htmlFor={`checkbox${user._id}`}></label>
+              </span>
+            </td>
+            <td>{user.firstName}</td>
+            <td>{user.lastName}</td>
+            <td>{user.email}</td>
+            <td>{user.password}</td>
+            <td>
+              <a href="#editEmployeeModal" className="edit" data-toggle="modal" onClick={() => openEditModal(user)}>
+                <i className="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
+              </a>
+              <a href="#deleteEmployeeModal" className="delete" data-toggle="modal" onClick={() => handleDeleteUser(user._id)}>
+                <i className="material-icons" data-toggle="tooltip" title="Eliminar">&#xE872;</i>
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+          </table>
+        </div>
+      </div>
+
+{/* Modal para Añadir Usuario */}
+<div id="addEmployeeModal" className="modal fade">
+  <div className="modal-dialog">
+    <div className="modal-content">
+      <form onSubmit={handleCreateUser}>
+        <div className="modal-header">						
+          <h4 className="modal-title">Añadir Usuario</h4>
+          <button type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div className="modal-body">					
+          <div className="form-group">
+            <label>Nombre</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              value={newUser.firstName}
+              onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Apellido</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              value={newUser.lastName}
+              onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input 
+              type="password" 
+              className="form-control" 
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              required 
+            />
+          </div>					
+        </div>
+        <div className="modal-footer">
+          <input type="button" className="btn btn-default" data-dismiss="modal" value="Cancelar" />
+          <input type="submit" className="btn btn-success" value="Añadir" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+{/* Modal para Editar Usuario */}
+<div id="editEmployeeModal" className="modal fade">
+  <div className="modal-dialog">
+    <div className="modal-content">
+      <form onSubmit={handleEditUser}>
+        <div className="modal-header">
+          <h4 className="modal-title">Editar Usuario</h4>
+          <button type="button" className="close" data-dismiss="modal" aria-hidden="true" onClick={closeEditModal}>&times;</button>
+        </div>
+        <div className="modal-body">
+          {editingUser !== null ? (
+            <div>
+              <div className="form-group">
+                <label>Nombre</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editingUser.firstName}
+                  onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })}
+                  required
+                />
               </div>
-              <div className="col-sm-6">
-                <a href="#addEmployeeModal" className="btn btn-success" data-toggle="modal">
-                  <i className="material-icons">&#xE147;</i> <span>Añadir un usuario nuevo</span>
-                </a>
-                <a href="#deleteEmployeeModal" className="btn btn-danger" data-toggle="modal">
-                  <i className="material-icons">&#xE15C;</i> <span>Eliminar</span>
-                </a>						
+              <div className="form-group">
+                <label>Apellido</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editingUser.lastName}
+                  onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={editingUser.email}
+                  onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Contraseña</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  value={editingUser.password}
+                  onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                  required
+                />
               </div>
             </div>
-          </div>
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>
-                  <span className="custom-checkbox">
-                    <input type="checkbox" id="selectAll" />
-                    <label htmlFor="selectAll"></label>
-                  </span>
-                </th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Correo electrónico</th>
-                <th>Contraseña</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id}>
-                  <td>{user.firstName}</td>
-                  <td>{user.lastName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.password}</td>
-                  <td>
-                    <a href="#editEmployeeModal" className="edit" data-toggle="modal" onClick={() => openEditModal(user)}>
-                      <i className="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
-                    </a>
-                    <a href="#deleteEmployeeModal" className="delete" data-toggle="modal" onClick={() => handleDeleteUser(user.id)}>
-                      <i className="material-icons" data-toggle="tooltip" title="Eliminar">&#xE872;</i>
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-          <div className="clearfix">
-            <div className="hint-text">Mostrando <b>5</b> de <b>25 </b> Entradas</div>
-            <ul className="pagination">
-              <li className="page-item disabled"><a href="#">Anterior</a></li>
-              <li className="page-item"><a href="#" className="page-link">1</a></li>
-              <li className="page-item"><a href="#" className="page-link">2</a></li>
-              <li className="page-item active"><a href="#" className="page-link">3</a></li>
-              <li className="page-item"><a href="#" className="page-link">4</a></li>
-              <li className="page-item"><a href="#" className="page-link">5</a></li>
-              <li className="page-item"><a href="#" className="page-link">Siguiente</a></li>
-            </ul>
-          </div>
+          ) : (
+            <p>Selecciona un usuario para editar</p>
+          )}
         </div>
-      </div>
-
-          {/* Modal para Añadir Usuario */}
-      <div id="addEmployeeModal" className="modal fade">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <form onSubmit={handleCreateUser}>
-              <div className="modal-header">						
-                <h4 className="modal-title">Añadir Usuario</h4>
-                <button type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              </div>
-              <div className="modal-body">					
-                <div className="form-group">
-                  <label>Email</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Contraseña</label>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    required 
-                  />
-                </div>					
-              </div>
-              <div className="modal-footer">
-                <input type="button" className="btn btn-default" data-dismiss="modal" value="Cancelar" />
-                <input type="submit" className="btn btn-success" value="Añadir" />
-              </div>
-            </form>
-          </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-default" data-dismiss="modal" onClick={closeEditModal}>
+            Cancelar
+          </button>
+          {editingUser !== null && (
+            <button type="submit" className="btn btn-info">
+              Guardar
+            </button>
+          )}
         </div>
-      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
-      {/* Modal para Editar Usuario */}
-      <div id="editEmployeeModal" className="modal fade">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <form onSubmit={handleEditUser}>
-              <div className="modal-header">
-                <h4 className="modal-title">Editar Usuario</h4>
-                <button type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Correo electrónico</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    value={editingUser.email}
-                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Contraseña</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={editingUser.password}
-                    onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <input type="button" className="btn btn-default" data-dismiss="modal" value="Cancelar" />
-                <input type="submit" className="btn btn-info" value="Guardar" />
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
       {/* Modal para Eliminar Usuario */}
       <div id="deleteEmployeeModal" className="modal fade">
         <div className="modal-dialog">
