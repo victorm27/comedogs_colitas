@@ -6,7 +6,7 @@ const CRUDUSERS = () => {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ email: '', password: '' });
   const [editingUser, setEditingUser] = useState(null);
-
+  const [setErrors] = useState({});
   useEffect(() => {
     // Obtener la lista de usuarios al cargar el componente
     axios.get('http://localhost:4000/users')
@@ -18,7 +18,15 @@ const CRUDUSERS = () => {
       });
   }, []);
 
-  const handleCreateUser = () => {
+  const handleCreateUser = (e) => {
+    e.preventDefault();
+
+    // Validación de campos
+    if (!newUser.email || !newUser.password) {
+      setErrors({ message: 'Todos los campos son obligatorios' });
+      return;
+    }
+
     // Crear un nuevo usuario
     axios.post('http://localhost:4000/users', newUser)
       .then(response => {
@@ -27,13 +35,24 @@ const CRUDUSERS = () => {
         setUsers([...users, response.data]);
         // Limpiar los campos de entrada después de la creación
         setNewUser({ email: '', password: '' });
+        setErrors({});
+        // Cerrar el modal de creación
+        document.getElementById('addEmployeeModal').style.display = 'none';
       })
       .catch(error => {
         console.error('Error al crear el usuario:', error);
       });
   };
 
-  const handleEditUser = () => {
+  const handleEditUser = (e) => {
+    e.preventDefault();
+
+    // Validación de campos
+    if (!editingUser.email || !editingUser.password) {
+      setErrors({ message: 'Todos los campos son obligatorios' });
+      return;
+    }
+
     // Editar un usuario existente
     axios.put(`http://localhost:4000/users/${editingUser.id}`, editingUser)
       .then(response => {
@@ -41,7 +60,9 @@ const CRUDUSERS = () => {
         // Actualizar la lista de usuarios después de la edición
         setUsers(users.map(user => (user.id === editingUser.id ? response.data : user)));
         // Cerrar el modal de edición
-        closeEditModal();
+        setEditingUser(null);
+        setErrors({});
+        document.getElementById('editEmployeeModal').style.display = 'none';
       })
       .catch(error => {
         console.error('Error al editar el usuario:', error);

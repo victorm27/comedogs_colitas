@@ -1,6 +1,8 @@
 // ForgotPassword.js
 import React from 'react';
 import '../styles/styles.min.css';
+import { useNavigate, Link  } from 'react-router-dom';
+
 const ForgotPassword = () => {
     return (
         <div className="container">
@@ -36,10 +38,14 @@ const ForgotPassword = () => {
                                         </form>
                                         <hr />
                                         <div className="text-center">
-                                            <a className="small" href="register.html">Crea una cuenta!</a>
+                                        <Link to="/register" className="small">
+                                        No tienes una cuenta? Crear una cuenta!
+                                        </Link>
                                         </div>
                                         <div className="text-center">
-                                            <a className="small" href="loginV2.html">¿Ya tienes una cuenta? Inicia Sesión!</a>
+                                        <Link to="/" className="small">
+                                        Ya tienes una cuenta? Inicia Sesión!
+                                        </Link>
                                         </div>
                                     </div>
                                 </div>
