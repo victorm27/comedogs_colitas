@@ -94,11 +94,6 @@ const Login = () => {
                       </form>
                       <hr />
                       <div className="text-center">
-                        <Link to="/forgotpassword" className="small">
-                        Olvidaste tu contraseña?
-                        </Link>
-                      </div>
-                      <div className="text-center">
                       <Link to="/register" className="small">
                       No tienes una cuenta? Crear una cuenta!
                         </Link>
