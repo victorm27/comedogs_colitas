@@ -109,8 +109,8 @@ const CRUDUSERS = () => {
             <tbody>
               {users.map(user => (
                 <tr key={user.cedula}>
-                  <td>{user.firstName}</td>
-                  <td>{user.lastName}</td>
+                  <td>{user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)}</td>
+                  <td>{user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1)}</td>
                   <td>{user.email}</td>
                   <td>{user.phoneNumber}</td>
                   <td>{user.cedula}</td>
