@@ -13,7 +13,7 @@ const CRUDUSERS = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/users');
+        const response = await axios.get('https://comedogs-backend.onrender.com/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error al obtener la lista de usuarios:', error);
@@ -36,7 +36,7 @@ const CRUDUSERS = () => {
     console.log('Editando usuario:', editingUser);
 
     // Resto del código para editar un usuario existente
-    axios.put(`http://localhost:4000/users/${userCedula}`, editingUser)
+    axios.put(`https://comedogs-backend.onrender.com/users/${userCedula}`, editingUser)
       .then(response => {
         console.log('Usuario editado exitosamente:', response.data);
         
@@ -59,7 +59,7 @@ const CRUDUSERS = () => {
   const handleDeleteUser = (userCedula) => {
     //e.preventDefault();
     // Eliminar un usuario
-    axios.delete(`http://localhost:4000/users/${userCedula}`)
+    axios.delete(`https://comedogs-backend.onrender.com/users/${userCedula}`)
       .then(response => {
         console.log('Usuario eliminado exitosamente:', response.data);
         

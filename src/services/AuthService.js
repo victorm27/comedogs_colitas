@@ -2,7 +2,7 @@
 class AuthService {
   login(email, password) {
     // Lógica de autenticación aquí
-    return fetch('http://localhost:4000/auth/login', {
+    return fetch('https://comedogs-backend.onrender.com/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

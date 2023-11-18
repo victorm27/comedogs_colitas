@@ -3,7 +3,7 @@ class UserService {
   async getUserById(userId) {
     try {
       // Lógica para obtener un usuario por su ID
-      const response = await fetch(`http://localhost:4000/users/${userId}`);
+      const response = await fetch(`https://comedogs-backend.onrender.com/users/${userId}`);
       if (!response.ok) {
         throw new Error('No se pudo obtener el usuario');
       }
@@ -17,7 +17,7 @@ class UserService {
   async updateUser(userId, userData) {
     try {
       // Lógica para actualizar un usuario por su ID
-      const response = await fetch(`http://localhost:4000/users/${userId}`, {
+      const response = await fetch(`https://comedogs-backend.onrender.com/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ class UserService {
   async deleteUser(userId) {
     try {
       // Lógica para eliminar un usuario por su ID
-      const response = await fetch(`http://localhost:4000/users/${userId}`, {
+      const response = await fetch(`https://comedogs-backend.onrender.com/users/${userId}`, {
         method: 'DELETE'
       });
       if (!response.ok) {
