@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/crudusers.css';
+import { Redirect } from 'react-router-dom';
 
 
 const CRUDUSERS = () => {
@@ -9,6 +10,7 @@ const CRUDUSERS = () => {
   const [setErrors] = useState({});
   const [forceUpdate, setForceUpdate] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [redirect, setRedirect] = useState(false);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -25,7 +27,7 @@ const CRUDUSERS = () => {
   // handleEditUser
   const handleEditUser = (e, userCedula) => {
     e.preventDefault();
-
+    console.log(e);
     // Validación de campos
     if (!editingUser || !editingUser.firstName || !editingUser.lastName || !editingUser.email || !editingUser.phoneNumber) {
       setErrors({ message: 'Todos los campos son obligatorios' });
@@ -38,17 +40,23 @@ const CRUDUSERS = () => {
     axios.put(`http://localhost:4000/users/${userCedula}`, editingUser)
       .then(response => {
         console.log('Usuario editado exitosamente:', response.data);
+        
         // Actualizar la lista de usuarios después de la edición
         setUsers(users.map(user => (users.cedula === userCedula ? response.data : user)));
+        //Mensaje en pantalla
+        alert('Usuario editado exitosamente');
+        setRedirect(true);
+        // Cerrar el modal
+        closeEditModal();
+        
       })
       .catch(error => {
         console.error('Error al editar el usuario:', error);
       });
-    
-    //Mensaje en pantalla
-    alert('Usuario editado exitosamente');
-    // Cerrar el modal
-    closeEditModal();
+
+      if (redirect) {
+        return <Redirect to="/tu_ruta_destino" />;
+      }
   };
 
   const handleDeleteUser = (userCedula) => {
