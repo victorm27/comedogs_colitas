@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/crudusers.css';
-import { Redirect } from 'react-router-dom';
+
 
 
 const CRUDUSERS = () => {
@@ -10,7 +10,6 @@ const CRUDUSERS = () => {
   const [setErrors] = useState({});
   const [forceUpdate, setForceUpdate] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [redirect, setRedirect] = useState(false);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -45,27 +44,26 @@ const CRUDUSERS = () => {
         setUsers(users.map(user => (users.cedula === userCedula ? response.data : user)));
         //Mensaje en pantalla
         alert('Usuario editado exitosamente');
-        setRedirect(true);
         // Cerrar el modal
         closeEditModal();
+        window.location.reload();
         
       })
       .catch(error => {
         console.error('Error al editar el usuario:', error);
       });
 
-      if (redirect) {
-        return <Redirect to="/tu_ruta_destino" />;
-      }
+      
   };
 
   const handleDeleteUser = (userCedula) => {
+    //e.preventDefault();
     // Eliminar un usuario
     axios.delete(`http://localhost:4000/users/${userCedula}`)
       .then(response => {
         console.log('Usuario eliminado exitosamente:', response.data);
-        // Actualizar la lista de usuarios después de la eliminación
-        setUsers(users.filter(user => users.cedula !== userCedula));
+        
+        window.location.reload();
       })
       .catch(error => {
         console.error('Error al eliminar el usuario:', error);
